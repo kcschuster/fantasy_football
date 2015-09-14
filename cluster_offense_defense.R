@@ -5,7 +5,7 @@
 # Creates table of offenses/defenses with their determined cluster values.
 # Keeps data from each week (not in place yet).
 
-# To-do: figure out optimal clustering, get data storage working week to week
+# To-do: determine optimal clustering, get data storage working week to week
 # *****************************************************************************
 
 
@@ -25,33 +25,62 @@ library(stringr)
 
 
 # Set working directory
-#setwd()
 
+
+# Set desired number of clusters
+defClusts <- 5
+offClusts <- 5
+
+
+# =============================================================================
+# Import and cluster team defense data
+# =============================================================================
 
 # Import and print team defense data from current 2015 season
 url_defense <- "http://sports.yahoo.com/nfl/stats/byteam?group=Defense&cat=Total&conference=NFL&year=season_2015&sort=1130&old_category=Total&old_group=Defense"
-defense_df <- readHTMLTable(url_defense, which = 7, stringsAsFactors = FALSE)
-defense_df <- defense_df[ , c(1, 2, seq(from = 3, to = ncol(defense_df), by = 2))]
-#write.csv(defense_df, file = "def_2014.csv")
+defense_df <- readHTMLTable(url_defense, which = 7, 
+                            stringsAsFactors = FALSE)
+defense_df <- defense_df[ , c(1, seq(from = 3, to = ncol(defense_df), by = 2))]
+
+# Remove "N/A" values and ensure values are numeric for clustering
+for (i in 1:ncol(defense_df)) {
+  defense_df[which(defense_df[ , i] == "N/A"), i] <- 0
+}
+cols <- 2:ncol(defense_df)
+defense_df[ , cols] <- as.numeric(as.character(unlist(defense_df[ ,cols])))
 
 # Cluster defenses into groups based on stats
-pam.def <- pam(defense_df[3:ncol(defense_df)], 1)
+pam.def <- pam(defense_df[3:ncol(defense_df)], defClusts)
 defense_df$Cluster <- pam.def$clustering
 team_summary <- data.frame("Team" = defense_df$Team, 
                            "DEF Cluster" = defense_df$Cluster)
+
+# Fix team names so compatible with data in other tables
+team_summary$Team <- word(as.character(team_summary$Team), -1)
+team_summary$DEF.Cluster <- as.factor(team_summary$DEF.Cluster)
+
+
+# =============================================================================
+# Import and cluster team offense data
+# =============================================================================
 
 # Import and print team offense data from current 2015 season
 url_offense <- "http://sports.yahoo.com/nfl/stats/byteam?group=Offense&cat=Total&conference=NFL&year=season_2015&sort=530&old_category=Total&old_group=Offense"
 offense_df <- readHTMLTable(url_offense, which = 7, stringsAsFactors = FALSE) 
 offense_df <- offense_df[ , seq(from = 1, to = ncol(offense_df), by = 2)]
 
-# Cluster offenses into groups based on stats
-pam.off <- pam(offense_df[3:ncol(offense_df)], 1)
+# Remove "N/A" values and ensure values are numeric for clustering 
+for (i in 1:ncol(offense_df)) {
+  offense_df[which(offense_df[ , i] == "N/A"), i] <- 0
+}
+cols <- 2:(ncol(offense_df) - 1)
+offense_df[ , cols] <- as.numeric(as.character(unlist(offense_df[ ,cols])))
+
+# Cluster offenses into groups based on stats (currently ignoring TOP)
+pam.off <- pam(offense_df[3:(ncol(offense_df) - 1)], offClusts)
 offense_df$Cluster <- pam.off$clustering
 team_summary$OFF.Cluster <- offense_df$Cluster
 
-# Fix team names so compatible with data in other tables
-team_summary$Team <- word(as.character(team_summary$Team), -1)
-
-
+# Treat cluster value as factor
+team_summary$OFF.Cluster <- as.factor(team_summary$OFF.Cluster)
 
