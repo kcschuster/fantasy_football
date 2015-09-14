@@ -1,5 +1,5 @@
 
-fantasy_football
+fantasy_football.R
 *************************
 
 Analysis of NFL data for fantasy football predictions.
