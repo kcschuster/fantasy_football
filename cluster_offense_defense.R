@@ -25,6 +25,7 @@ library(stringr)
 
 
 # Set working directory
+setwd("~/Dropbox/Data_Projects/My_Projects/My_Fantasy_Football/fantasy_football")
 
 
 # Set desired number of clusters
@@ -50,7 +51,7 @@ cols <- 2:ncol(defense_df)
 defense_df[ , cols] <- as.numeric(as.character(unlist(defense_df[ ,cols])))
 
 # Cluster defenses into groups based on stats
-pam.def <- pam(defense_df[3:ncol(defense_df)], defClusts)
+pam.def <- pam(defense_df[5:ncol(defense_df)], defClusts)
 defense_df$Cluster <- pam.def$clustering
 team_summary <- data.frame("Team" = defense_df$Team, 
                            "DEF Cluster" = defense_df$Cluster)
