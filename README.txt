@@ -2,7 +2,8 @@
 fantasy_football
 *************************
 
-Fantasy football data analysis 
+Using football stats to help set a fantasy football roster.
+In progress. 
 
 *************************
 
