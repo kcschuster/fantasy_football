@@ -13,7 +13,7 @@ if (!require("XML")) {
 library(XML)
 
 # Set working directory
-#setwd()
+setwd("~/Dropbox/Data_Projects/My_Projects/My_Fantasy_Football/fantasy_football")
 
 
 # Set depth chart url
@@ -48,9 +48,9 @@ afc_divisions <- c("N", "E", "N", "N", "W", "S", "S", "S", "W", "E", "E",
                    "E", "W", "N", "W", "S")
 
 # Organize data into data frame
-offense_df <- data.frame()
+depth_chart <- data.frame()
 for (i in 1:16) {
-  offense_df <- rbind(offense_df, data.frame("Player" = depth_nfc[[i]]$Player, 
+  depth_chart <- rbind(depth_chart, data.frame("Player" = depth_nfc[[i]]$Player, 
                              "Position" = depth_nfc[[i]]$Pos,
                              "Team" = nfc_teams[i],
                              "Abbrev" = nfc_abbrevs[i],
@@ -59,7 +59,7 @@ for (i in 1:16) {
                              "Division" = nfc_divisions[i]))
 }
 for (i in 1:16) {
-  offense_df <- rbind(offense_df, data.frame("Player" = depth_afc[[i]]$Player, 
+  depth_chart <- rbind(depth_chart, data.frame("Player" = depth_afc[[i]]$Player, 
                              "Position" = depth_afc[[i]]$Pos, 
                              "Team" = afc_teams[i],
                              "Abbrev" = afc_abbrevs[i],
@@ -71,31 +71,31 @@ rm(depth_nfc)
 rm(depth_afc)
 
 # Fill in missing positions
-for (i in 1:nrow(offense_df)) {
-  if (offense_df[i, "Position"] == "") {
-    offense_df[i, "Position"] <- offense_df[i-1, "Position"]
+for (i in 1:nrow(depth_chart)) {
+  if (depth_chart[i, "Position"] == "") {
+    depth_chart[i, "Position"] <- depth_chart[i-1, "Position"]
   }
 }
 
 # Assign depth value by checking for 1st, 2nd, etc. occurrence of position
 prev <- "dummy"
-offense_df$Depth <- 0
+depth_chart$Depth <- 0
 k <- 0
-for (i in 1:nrow(offense_df)) {
-  pos <- offense_df[i, "Position"]
+for (i in 1:nrow(depth_chart)) {
+  pos <- depth_chart[i, "Position"]
   if (pos != prev) {
     k <- 1
   } else {
     k <- k + 1
   }
-  offense_df[i, "Depth"] <- k
-  prev <- offense_df[i, "Position"]
+  depth_chart[i, "Depth"] <- k
+  prev <- depth_chart[i, "Position"]
 }
 
 # Function to return position on depth chart for specific player
 get_depth_chart <- function(player) {
-  c(as.character(offense_df[which(offense_df$Player == player), "Position"]),
-    as.character(offense_df[which(offense_df$Player == player), "Depth"]))
+  c(as.character(depth_chart[which(depth_chart$Player == player), "Position"]),
+    as.character(depth_chart[which(depth_chart$Player == player), "Depth"]))
 }
 
 
