@@ -17,7 +17,7 @@ library(stringr)
 
 
 # Set working directory
-setwd("~/Dropbox/Data_Projects/My_Projects/My_Fantasy_Football/fantasy_football")
+
 
 
 # Schedule file
