@@ -50,15 +50,12 @@ for (i in 1:ncol(defense_df)) {
 cols <- 2:ncol(defense_df)
 defense_df[ , cols] <- as.numeric(as.character(unlist(defense_df[ ,cols])))
 
-# Cluster defenses into groups based on stats
-pam.def <- pam(defense_df[5:ncol(defense_df)], defClusts)
-defense_df$Cluster <- pam.def$clustering
-team_summary <- data.frame("Team" = defense_df$Team, 
-                           "DEF Cluster" = defense_df$Cluster)
-
-# Fix team names so compatible with data in other tables
-team_summary$Team <- word(as.character(team_summary$Team), -1)
-team_summary$DEF.Cluster <- as.factor(team_summary$DEF.Cluster)
+# k-means clustering of defense into groups based on stats
+set.seed(2)
+km.out <- kmeans(defense_df[5:ncol(defense_df)], defClusts, 50)
+defense_df$Cluster <- km.out$cluster
+team_summary <- data.frame("Team" = defense_df$Team,
+                           "DEF Cluster" = as.factor(defense_df$Cluster))
 
 
 # =============================================================================
@@ -77,11 +74,12 @@ for (i in 1:ncol(offense_df)) {
 cols <- 2:(ncol(offense_df) - 1)
 offense_df[ , cols] <- as.numeric(as.character(unlist(offense_df[ ,cols])))
 
-# Cluster offenses into groups based on stats (currently ignoring TOP)
-pam.off <- pam(offense_df[3:(ncol(offense_df) - 1)], offClusts)
-offense_df$Cluster <- pam.off$clustering
-team_summary$OFF.Cluster <- offense_df$Cluster
+# k-means clustering of offense into groups based on stats (no TOP)
+set.seed(2)
+km.out <- kmeans(offense_df[3:ncol(offense_df) - 1], offClusts, 50)
+offense_df$Cluster <- km.out$cluster
+team_summary$OFF.Cluster <- as.factor(offense_df$Cluster)
 
-# Treat cluster value as factor
-team_summary$OFF.Cluster <- as.factor(team_summary$OFF.Cluster)
+# Fix team names so compatible with data in other tables
+team_summary$Team <- word(as.character(team_summary$Team), -1)
 
