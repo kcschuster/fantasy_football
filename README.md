@@ -1,6 +1,7 @@
 # fantasy_football
 Web scraping and machine learning for fantasy football prediction.
 
+(In progress)
 
 
 **Contents:**
