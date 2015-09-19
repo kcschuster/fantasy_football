@@ -1,8 +1,22 @@
 # *****************************************************************************
-# nfl_schedule.R
-# Imports NFL schedule from saved .csv file.
-# Creates table of game data for each team, including home or away info.
+# Title:        nfl_schedule.R
+# Description:  Imports NFL schedule from saved .csv file (downloaded from
+#               "https://excelfantasyfootball.wordpress.com/2015/04/26/
+#               nfl-2015-schedule-free-excel-spreadsheet/").  Creates table of
+#               game data for each team, including whether the team was home
+#               or away.
+# Input:        N/A
+# Author:       Kelsey Schuster
 # *****************************************************************************
+
+
+
+# INPUT:
+# ============================================================================
+# Set your working directory
+#setwd("~/")
+# ============================================================================
+
 
 
 # Install and load required libraries
@@ -16,14 +30,16 @@ if (!require("stringr")) {
 library(stringr)
 
 
-# Set working directory
 
+# ============================================================================
+# Import schedule file (assumed to be already saved in working directory)
+# ============================================================================
 
-
-# Schedule file
+# Set schedule file
 # downloaded from "https://excelfantasyfootball.wordpress.com/2015/04/26/
 #   nfl-2015-schedule-free-excel-spreadsheet/"
 schedule_file <- "nfl-2015-schedule.csv"
+
 
 # import schedule and eliminate extra info
 import_df <- read.csv(file = schedule_file, stringsAsFactors = FALSE)
@@ -31,6 +47,7 @@ import_df$Home <- substr(import_df$Home, 2, length(import_df$Home))
 import_df$Day <- NULL
 import_df$Date <- NULL
 import_df$Time <- NULL
+
 
 # Set up new schedule data frame - organize
 schedule <- data.frame("Team" = sort(unique(import_df$Visitor)), "Week1" = "0", 
@@ -43,6 +60,12 @@ schedule <- data.frame("Team" = sort(unique(import_df$Visitor)), "Week1" = "0",
                        "Home13" = -1, "Week14" = "0", "Home14" = -1, "Week15" = "0",
                        "Home15" = -1, "Week16" = "0", "Home16" = -1, "Week17" = "0",
                        "Home17" = -1)
+
+
+
+# ============================================================================
+# Populate data frame with schedule info
+# ============================================================================
 
 # Organize imported data into new schedule for each week and team
 for (week in 1:17) {
@@ -66,6 +89,7 @@ for (week in 1:17) {
       schedule[team, sprintf("Week%s", week)] <- "NA"
       schedule[team, sprintf("Home%s", week)] <- -1
     }
+    
     # Check if team is the visitor or the home team, fill in data
     else if (vis == schedule[team, ]$Team) {
       schedule[team, sprintf("Week%s", week)] <- home
@@ -76,8 +100,18 @@ for (week in 1:17) {
     }
   }
 }
+
+# Free up space
 rm(import_df)
 
+
+
+# ============================================================================
+# Print output
+#   home = 0 (away), home = 1 (home), home = -1 (bye week, no game)
+# ============================================================================
+
+# Print schedule data
 schedule
 
 
