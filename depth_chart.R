@@ -4,9 +4,10 @@
 #               source. Creates table of all QB, RB, WR1/WR2, TE, K players on 
 #               NFL rosters with team, position, and depth info.
 # Input:        N/A
+# Output:       "nfl_depth_chart.csv" = file with each players position on 
+#               his team's depth chart
 # Author:       Kelsey Schuster
 # *****************************************************************************
-
 
 
 # INPUT:
@@ -31,7 +32,6 @@ library(XML)
 # Set depth chart url
 url_depth_nfc <- "http://www.foxsports.com/fantasy/football/commissioner/Players/DepthCharts.aspx?nflLeague=2&position=-99"
 url_depth_afc <- "http://www.foxsports.com/fantasy/football/commissioner/Players/DepthCharts.aspx?nflLeague=1&position=-99"
-
 
 # Read depth chart info
 depth_nfc <- readHTMLTable(url_depth_nfc, stringsAsFactors = FALSE)
@@ -95,14 +95,12 @@ for (i in 1:16) {
 rm(depth_nfc)
 rm(depth_afc)
 
-
 # Fill in missing positions
 for (i in 1:nrow(depth_chart)) {
   if (depth_chart[i, "Position"] == "") {
     depth_chart[i, "Position"] <- depth_chart[i-1, "Position"]
   }
 }
-
 
 # Assign depth value by checking for 1st, 2nd, etc. occurrence of position
 prev <- "dummy"
@@ -119,11 +117,13 @@ for (i in 1:nrow(depth_chart)) {
   prev <- depth_chart[i, "Position"]
 }
 
+
 # ============================================================================
 # Function definiton
 # ============================================================================
 
 # Function to return position on depth chart for specific player
+#   Example of use:  get_depth_chart("Eddie Lacy")
 get_depth_chart <- function(player) {
   c(as.character(depth_chart[which(depth_chart$Player == player), "Position"]),
     as.character(depth_chart[which(depth_chart$Player == player), "Depth"]))
@@ -131,11 +131,9 @@ get_depth_chart <- function(player) {
 
 
 
-# =============================================================================
-# Example of use
-# =============================================================================
-
-get_depth_chart("Carson Palmer")
-get_depth_chart("James Jones")
-get_depth_chart("Eddie Lacy")
+# OUTPUT:
+# ============================================================================
+# Print weather info to file
+write.csv(depth_chart, file = "nfl_depth_chart.csv")
+# ============================================================================
 

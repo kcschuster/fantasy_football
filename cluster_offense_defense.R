@@ -5,12 +5,13 @@
 #               stats.  Creates table of offenses/defenses with their determined 
 #               cluster values.  Keeps data from each week (not in place yet).
 # Input:        "defClusts", "offClusts" = number defense and offense clusters
+# Output:       "nfl_cluster_summary.csv" = file with teams and their resp.
+#               clusters
 # Author:       Kelsey Schuster
 #
 # To-do:        determine optimal clustering, get data storage working week to 
 #               week
 # *****************************************************************************
-
 
 
 # INPUT:
@@ -52,14 +53,12 @@ defense_df <- readHTMLTable(url_defense, which = 7,
                             stringsAsFactors = FALSE)
 defense_df <- defense_df[ , c(1, seq(from = 3, to = ncol(defense_df), by = 2))]
 
-
 # Remove "N/A" values and ensure values are numeric for clustering
 for (i in 1:ncol(defense_df)) {
   defense_df[which(defense_df[ , i] == "N/A"), i] <- 0
 }
 cols <- 2:ncol(defense_df)
 defense_df[ , cols] <- as.numeric(as.character(unlist(defense_df[ ,cols])))
-
 
 # k-means clustering of defense into groups based on stats
 set.seed(2)
@@ -78,7 +77,6 @@ url_offense <- "http://sports.yahoo.com/nfl/stats/byteam?group=Offense&cat=Total
 offense_df <- readHTMLTable(url_offense, which = 7, stringsAsFactors = FALSE) 
 offense_df <- offense_df[ , seq(from = 1, to = ncol(offense_df), by = 2)]
 
-
 # Remove "N/A" values and ensure values are numeric for clustering 
 for (i in 1:ncol(offense_df)) {
   offense_df[which(offense_df[ , i] == "N/A"), i] <- 0
@@ -86,21 +84,19 @@ for (i in 1:ncol(offense_df)) {
 cols <- 2:(ncol(offense_df) - 1)
 offense_df[ , cols] <- as.numeric(as.character(unlist(offense_df[ ,cols])))
 
-
 # k-means clustering of offense into groups based on stats (no TOP)
 set.seed(2)
 km.out <- kmeans(offense_df[3:ncol(offense_df) - 1], offClusts, 50)
 offense_df$Cluster <- km.out$cluster
 team_summary$OFF.Cluster <- as.factor(offense_df$Cluster)
 
-
 # Fix team names so compatible with data in other tables
 team_summary$Team <- word(as.character(team_summary$Team), -1)
 
 
 
-# =============================================================================
-# Print output
-# =============================================================================
-
-team_summary
+# OUTPUT:
+# ============================================================================
+# Print cluster info to file
+write.csv(team_summary, file = "nfl_cluster_summary.csv")
+# ============================================================================

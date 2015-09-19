@@ -5,10 +5,11 @@
 #               nfl-2015-schedule-free-excel-spreadsheet/").  Creates table of
 #               game data for each team, including whether the team was home
 #               or away.
-# Input:        N/A
+# Input:        "nfl-2015-schedule.csv" downloaded from above link.
+# Output:       "nfl_schedule.csv" = file with teams + opponents for each week,
+#               including home/away/bye info
 # Author:       Kelsey Schuster
 # *****************************************************************************
-
 
 
 # INPUT:
@@ -62,7 +63,6 @@ schedule <- data.frame("Team" = sort(unique(import_df$Visitor)), "Week1" = "0",
                        "Home17" = -1)
 
 
-
 # ============================================================================
 # Populate data frame with schedule info
 # ============================================================================
@@ -106,12 +106,9 @@ rm(import_df)
 
 
 
+# OUTPUT:
 # ============================================================================
-# Print output
+# Print schedule data to file
 #   home = 0 (away), home = 1 (home), home = -1 (bye week, no game)
+write.csv(schedule, file = "nfl_schedule.csv")
 # ============================================================================
-
-# Print schedule data
-schedule
-
-

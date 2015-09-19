@@ -3,12 +3,21 @@
 # Description:  Gets current weather data using airport codes for all NFL 
 #               cities.  Makes table of basic weather info relevant to 
 #               football games.
-# Input:        todays_date = date we want to check weather for
+# Input:        "todays_date" = date we want to check weather for
+# Output:       "nfl_weather.csv" = table with current team weather info
 # Author:       Kelsey Schuster
 # *****************************************************************************
 
+
+# INPUT:
+# ============================================================================
 # Set your working directory
-#setwd()
+setwd("~/Dropbox/Data_Projects/My_Projects/My_Fantasy_Football/fantasy_football")
+
+# Date of interest in YYYY-MM-DD form (cannot be date in future, so if 
+#    interested in game conditions, need to check the day of)
+todays_date <- "2015-09-18"
+# ============================================================================
 
 
 # Install and load necessary packages
@@ -16,16 +25,6 @@ if (!require("weatherData")) {
   install.packages("weatherData")
 }
 library(weatherData)
-
-
-# ============================================================================
-# INPUT:
-
-# Date of interest in YYYY-MM-DD form (cannot be date in future, so if 
-#    interested in game conditions, need to check the day of)
-todays_date <- "2015-09-18"
-# ============================================================================
-
 
 
 # Supply team names 
@@ -44,8 +43,7 @@ weather_codes <- c("KGEU", "KATL", "KCLT", "KMDW", "KGKY", "KDET",
                    "KIND", "KJAX", "KMKC", "KMIA", "KBOS", "KEWR",
                    "KOAK", "KPIT", "KSAN", "KBNA")
 
-
-# Make data frame of information
+# Make data frame of team/code information
 weather_df <- data.frame("Team" = nfl_teams, "Code" = weather_codes, "TempF" = 0,
                          "WindMPH" = 0, "Conditions" = "0")
 class(weather_df$Conditions) <- "character"
@@ -79,5 +77,10 @@ weather_df$WindMPH <- as.numeric(weather_df$WindMPH)
 weather_df$Conditions <- as.factor(weather_df$Conditions)
 
 
-weather_df 
+# OUTPUT:
+# ============================================================================
+# Print weather info to file
+write.csv(weather_df, file = "nfl_weather.csv")
+# ============================================================================
+
 
