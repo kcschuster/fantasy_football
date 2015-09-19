@@ -12,3 +12,5 @@ groups based on current cumulative team stats (i.e. finds defenses/offenses that
 **depth_chart.R** - retrieves each team's current depth chart for all fantasy-relevant offensive positions
 
 **nfl_schedule.R** - retrieves and organizes NFL season schedule info for each team
+
+**weather.R** - retrieves current weather information for each NFL city
