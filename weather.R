@@ -12,7 +12,7 @@
 # INPUT:
 # ============================================================================
 # Set your working directory
-setwd("~/Dropbox/Data_Projects/My_Projects/My_Fantasy_Football/fantasy_football")
+setwd("~/")
 
 # Date of interest in YYYY-MM-DD form (cannot be date in future, so if 
 #    interested in game conditions, need to check the day of)
